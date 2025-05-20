@@ -25,7 +25,8 @@ struct AirtableBase {
         }
         
         if requestResponse != HTTPResponse.ok {
-            print(requestResponse)
+            print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+            return
         }
         
         guard let jsonData = try? JSONSerialization.jsonObject(with: requestData, options: []) as? [String: Any] else {
@@ -46,7 +47,8 @@ struct AirtableBase {
         }
         
         if requestResponse != HTTPResponse.ok {
-            print(requestResponse)
+            print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+            return []
         }
         
         guard let jsonData = try? JSONSerialization.jsonObject(with: requestData, options: []) as? [String: Any] else {
@@ -77,7 +79,8 @@ struct AirtableBase {
         }
         
         if requestResponse != HTTPResponse.ok {
-            print(requestResponse)
+            print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+            return
         }
     }
     
@@ -106,7 +109,8 @@ struct AirtableBase {
         }
         
         if requestResponse != HTTPResponse.ok {
-            print(requestResponse)
+            print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+            return
         }
     }
     
