@@ -81,6 +81,35 @@ struct AirtableBase {
         }
     }
     
+    public func updateRecord(tableName: String, recordData: [[String : Any]]) async {
+        await self.createRecord(tableName: tableName, recordData: recordData)
+    }
+    
+    public func deleteRecord(tableName: String, recordIDs: [String]) async {
+        var requestURL: String = "https://api.airtable.com/v0/\(self.baseID)/\(tableName)?"
+        for i in 0..<recordIDs.count {
+            if i < recordIDs.count - 1 {
+                requestURL += "records[]=\(recordIDs[i])&"
+            }
+            else {
+                requestURL += "records[]=\(recordIDs[i])"
+            }
+        }
+
+        guard let (_, requestResponse) = try? await Requester.sendRequest(
+            to: requestURL,
+            method: HTTPMethod.DELETE,
+            headers: ["Authorization": "Bearer \(AirtableKit.shared.apiKey)"]
+        ) else {
+            print("Not able to delete record from table")
+            return
+        }
+        
+        if requestResponse != HTTPResponse.ok {
+            print(requestResponse)
+        }
+    }
+    
     private mutating func getTableDataFromJSON(from json: [String : Any]) {
         guard let _tables = json["tables"] as? [[String : Any]] else {
             print("Unable to parse JSON data from response")
