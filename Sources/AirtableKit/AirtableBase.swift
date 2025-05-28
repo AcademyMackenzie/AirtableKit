@@ -7,11 +7,19 @@
 
 import Foundation
 
-struct AirtableBase {
+/// A struct Representing a Airtable Base
+///
+/// Here are all the functions 
+public struct AirtableBase {
     public var baseID: String
     public var tables: [AirtableTable]
     
-    init(baseID: String) async {
+    /// Airtable Base init
+    ///
+    /// To have an airtable base it is needed to have the baseID, the init use itself to share with all functions when created.
+    ///
+    /// - Parameter baseID: The used base ID
+    public init(baseID: String) async {
         self.baseID = baseID
         self.tables = []
         
@@ -36,6 +44,11 @@ struct AirtableBase {
         self.getTableDataFromJSON(from: jsonData)
     }
     
+    /// This function represeants Read from the CRUD for a Table.
+    ///
+    /// - Parameter tableName: A String with the name of the table
+    ///
+    /// - Returns: Array with all the ``AirtableRecord`` of a Table.
     public func queryTable(tableName: String) async -> [AirtableRecord] {
         guard let (requestData, requestResponse) = try? await Requester.sendRequest(
             to: "https://api.airtable.com/v0/\(self.baseID)/\(tableName)",
@@ -59,6 +72,11 @@ struct AirtableBase {
         return self.getRecordDataFromJSON(from: jsonData)
     }
     
+    /// This function representes the Creating for a Record in a existing Airtable Base and Airtable Table.
+    ///
+    /// - Parameters:
+    ///    - tableName: A String with the name of the table
+    ///    - recordData: A Array dictionary with the key being name of the record and the value being the value of the record
     public func createRecord(tableName: String, recordData: [[String : Any]]) async {
         let _recordData: [String : Any] = [
             "records": recordData
@@ -84,10 +102,20 @@ struct AirtableBase {
         }
     }
     
+    /// The function that represents the Update from the CRUD for a Record
+    ///
+    ///  - Parameters:
+    ///   - tableName: The name of the table of the Record being eddited
+    ///   - recordData: A Array dictionary with the key being name of the record and the value being the value of the record
     public func updateRecord(tableName: String, recordData: [[String : Any]]) async {
         await self.createRecord(tableName: tableName, recordData: recordData)
     }
     
+    /// The function that representes the Delete from the CRUD for a Record
+    ///
+    /// - Parameters:
+    ///   - tableName: The name of the table that the records are being deleted
+    ///   - recordsIDs: An Arrays of IDs that are being deleted
     public func deleteRecord(tableName: String, recordIDs: [String]) async {
         var requestURL: String = "https://api.airtable.com/v0/\(self.baseID)/\(tableName)?"
         for i in 0..<recordIDs.count {
