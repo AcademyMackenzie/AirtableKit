@@ -7,8 +7,15 @@
 
 import Foundation
 
-struct AirtableTable: Codable {
+/// Struct that represents a Table from Airtable
+public struct AirtableTable: Codable {
+    
+    /// The Table id from Airtable
     public var id: String
+    
+    /// The Table name from Airtable
     public var name: String
+    
+    /// All the ``/AirtableKit/AirtableField`` the Table have
     public var fields: [AirtableField]
 }

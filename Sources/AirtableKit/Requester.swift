@@ -7,13 +7,15 @@
 
 import Foundation
 
-enum HTTPMethod: String {
+/// Enum indicating the HTTP Method used
+public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
     case DELETE = "DELETE"
 }
 
-enum HTTPResponse: Int {
+/// Enum with all possible cases of HTTP Response from Airtable
+public enum HTTPResponse: Int {
     case ok = 200
     case badRequest = 400
     case unauthorized = 401
@@ -28,7 +30,8 @@ enum HTTPResponse: Int {
     case serviceUnavailable = 503
     case unknownResponse
     
-    var message: String {
+    /// Var with all messages for each case
+    public var message: String {
         switch self {
         case .ok:
             "Request completed successfully."
@@ -60,7 +63,24 @@ enum HTTPResponse: Int {
     }
 }
 
-final class Requester {
+/// The requester for the API
+///
+/// The requester will be called when doing the CRUD. You can use all the functions in ``AirtableBase``: ``AirtableBase/createRecord(tableName:recordData:)``, ``AirtableBase/queryTable(tableName:)``, ``AirtableBase/updateRecord(tableName:recordData:)`` and ``AirtableBase/deleteRecord(tableName:recordIDs:)``.
+public final class Requester {
+    
+    /// Function that wil send a request to Airtable
+    ///
+    /// The function used in ``AirtableBase``, to make the CRUD: ``AirtableBase/createRecord(tableName:recordData:)``, ``AirtableBase/queryTable(tableName:)``, ``AirtableBase/updateRecord(tableName:recordData:)`` and ``AirtableBase/deleteRecord(tableName:recordIDs:)``.
+    ///
+    /// - Parameters:
+    ///    - url: the url from the Airtable API with your token.
+    ///    - method: the ``HTTPMethod`` that will be used.
+    ///    - headers: A dictionary with the key beeing the Airtable Base/Field/Record name and the value being the value related.
+    ///    - body: The JSON serialization of the Record Data.
+    ///
+    /// - returns: A tuple with the Data received from the API and the ``/AirtableKit/HTTPResponse`` from the API.
+    ///
+    /// - throws: a ``RequestError``: a ``RequestError/failedRequest`` or a ``RequestError/invalidURLString``.
     public static func sendRequest(to url: String, method: HTTPMethod, headers: [String : String], body: Data? = nil) async throws -> (Data, HTTPResponse) {
         guard let url: URL = URL(string: url) else {
             throw RequestError.invalidURLString
