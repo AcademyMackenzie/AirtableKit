@@ -12,6 +12,7 @@ public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
     case DELETE = "DELETE"
+    case PATCH = "PATCH"
 }
 
 /// Enum with all possible cases of HTTP Response from Airtable
