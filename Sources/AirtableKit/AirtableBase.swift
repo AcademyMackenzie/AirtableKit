@@ -108,7 +108,29 @@ public struct AirtableBase {
     ///   - tableName: The name of the table of the Record being eddited
     ///   - recordData: A Array dictionary with the key being name of the record and the value being the value of the record
     public func updateRecord(tableName: String, recordData: [[String : Any]]) async {
-        await self.createRecord(tableName: tableName, recordData: recordData)
+        let _recordData: [String : Any] = [
+            "records": recordData
+        ]
+        let jsonBody = try? JSONSerialization.data(withJSONObject: _recordData)
+        print(_recordData)
+        
+        guard let (_, requestResponse) = try? await Requester.sendRequest(
+            to: "https://api.airtable.com/v0/\(self.baseID)/\(tableName)",
+            method: HTTPMethod.PATCH,
+            headers: [
+                "Authorization": "Bearer \(AirtableKit.shared.apiKey)",
+                "Content-Type": "application/json"
+            ],
+            body: jsonBody
+        ) else {
+            print("Not able to query for table records")
+            return
+        }
+        
+        if requestResponse != HTTPResponse.ok {
+            print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+            return
+        }
     }
     
     /// The function that representes the Delete from the CRUD for a Record

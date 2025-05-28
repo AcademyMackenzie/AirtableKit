@@ -12,6 +12,7 @@ public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
     case DELETE = "DELETE"
+    case PATCH = "PATCH"
 }
 
 /// Enum with all possible cases of HTTP Response from Airtable
@@ -44,19 +45,19 @@ public enum HTTPResponse: Int {
         case .forbbiden:
             "Accessing a protected resource with API credentials that don't have access to that resource."
         case .notFound:
-            "Route or resource is not found. This error is returned when the request hits an undefined route, or if the resource doesn't exist (e.g. has been deleted)."
+            "Route or resource is not found."
         case .requestEntityTooLarge:
-            "The request exceeded the maximum allowed payload size. You shouldn't encounter this under normal use."
+            "The request exceeded the maximum allowed payload size."
         case .invalidRequest:
-            "The request data is invalid. This includes most of the base-specific validations. You will receive a detailed error message and code pointing to the exact issue."
+            "The request data is invalid."
         case .tooManyRequests:
-            "Rate limit exceeded. Please try again later"
+            "Rate limit exceeded. Please try again later."
         case .internalServerError:
             "The server encountered an unexpected condition."
         case .badGateway:
-            "Airtable's servers are restarting or an unexpected outage is in progress. You should generally not receive this error, and requests are safe to retry."
+            "Airtable's servers are restarting or an unexpected outage is in progress."
         case .serviceUnavailable:
-            "The server could not process your request in time. The server could be temporarily unavailable, or it could have timed out processing your request. You should retry the request with backoffs."
+            "The server could not process your request in time. The server could be temporarily unavailable, or it could have timed out processing your request."
         case .unknownResponse:
             "Unknow response."
         }
