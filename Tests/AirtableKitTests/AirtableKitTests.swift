@@ -1,6 +1,4 @@
 import Testing
 @testable import AirtableKit
 
-@Test func example() async throws {
-
-}
+@Test func example() async throws {}

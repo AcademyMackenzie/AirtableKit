@@ -112,6 +112,7 @@ public struct AirtableBase {
             "records": recordData
         ]
         let jsonBody = try? JSONSerialization.data(withJSONObject: _recordData)
+        print(_recordData)
         
         guard let (_, requestResponse) = try? await Requester.sendRequest(
             to: "https://api.airtable.com/v0/\(self.baseID)/\(tableName)",
