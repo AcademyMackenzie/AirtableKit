@@ -69,7 +69,40 @@ public struct AirtableBase {
             return []
         }
         
-        return self.getRecordDataFromJSON(from: jsonData)
+        var allRecords: [AirtableRecord] = []
+        
+        var recordData = self.getRecordDataFromJSON(from: jsonData)
+        allRecords.append(contentsOf: recordData.0)
+        
+        var offset: String? = recordData.1
+        
+        while offset != nil {
+            guard let (requestData, requestResponse) = try? await Requester.sendRequest(
+                to: "https://api.airtable.com/v0/\(self.baseID)/\(tableName)?offset=\(offset!)",
+                method: HTTPMethod.GET,
+                headers: ["Authorization": "Bearer \(AirtableKit.shared.apiKey)"]
+            ) else {
+                print("Not able to query for table records")
+                return []
+            }
+            
+            if requestResponse != HTTPResponse.ok {
+                print("[ERROR]: Request error. HTTP code \(requestResponse.rawValue), \(requestResponse.message)")
+                return []
+            }
+            
+            guard let jsonData = try? JSONSerialization.jsonObject(with: requestData, options: []) as? [String: Any] else {
+                print("Not able to parse request data")
+                return []
+            }
+            
+            recordData = self.getRecordDataFromJSON(from: jsonData)
+            allRecords.append(contentsOf: recordData.0)
+            
+            offset = recordData.1
+        }
+        
+        return allRecords
     }
     
     /// This function representes the Creating for a Record in a existing Airtable Base and Airtable Table.
@@ -196,10 +229,10 @@ public struct AirtableBase {
         }
     }
     
-    private func getRecordDataFromJSON(from json: [String : Any]) -> [AirtableRecord] {
+    private func getRecordDataFromJSON(from json: [String : Any]) -> ([AirtableRecord], String?) {
         guard let _records = json["records"] as? [[String : Any]] else {
             print("Unable to parse JSON data from response")
-            return []
+            return ([], nil)
         }
         
         var records: [AirtableRecord] = []
@@ -213,6 +246,11 @@ public struct AirtableBase {
             ))
         }
         
-        return records
+        var pagination: String? = nil
+        if let offset = json["offset"] as? String {
+            pagination = offset
+        }
+        
+        return (records, pagination)
     }
 }
