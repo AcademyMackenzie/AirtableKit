@@ -82,11 +82,24 @@ public final class Requester {
     /// - returns: A tuple with the Data received from the API and the ``/AirtableKit/HTTPResponse`` from the API.
     ///
     /// - throws: a ``RequestError``: a ``RequestError/failedRequest`` or a ``RequestError/invalidURLString``.
-    public static func sendRequest(to url: String, method: HTTPMethod, headers: [String : String], body: Data? = nil) async throws -> (Data, HTTPResponse) {
-        guard let url: URL = URL(string: url) else {
+    public static func sendRequest(to url: String, parameters: [String: String] = [:], method: HTTPMethod, headers: [String : String], body: Data? = nil) async throws -> (Data, HTTPResponse) {
+        guard var urlComponents: URLComponents = URLComponents(string: url) else {
             throw RequestError.invalidURLString
         }
         
+        var queryParameters: [URLQueryItem] = []
+        for (parameter, value) in parameters {
+            queryParameters.append(URLQueryItem(name: parameter, value: value))
+        }
+        
+        if !queryParameters.isEmpty {
+            urlComponents.queryItems = queryParameters
+        }
+        
+        guard let url = urlComponents.url else {
+            throw RequestError.invalidURLString
+        }
+                
         var request: URLRequest = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers

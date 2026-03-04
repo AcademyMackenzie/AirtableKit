@@ -49,9 +49,12 @@ public struct AirtableBase {
     /// - Parameter tableName: A String with the name of the table
     ///
     /// - Returns: Array with all the ``AirtableRecord`` of a Table.
-    public func queryTable(tableName: String) async -> [AirtableRecord] {
+    public func queryTable(tableName: String, filterFormula: String = "") async -> [AirtableRecord] {        
         guard let (requestData, requestResponse) = try? await Requester.sendRequest(
             to: "https://api.airtable.com/v0/\(self.baseID)/\(tableName)",
+            parameters: [
+                "filterByFormula": filterFormula
+            ],
             method: HTTPMethod.GET,
             headers: ["Authorization": "Bearer \(AirtableKit.shared.apiKey)"]
         ) else {
